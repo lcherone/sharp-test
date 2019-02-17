@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "conf": "latest",
+    "ejs": "latest",
+    "express": "latest",
+    "express-fileupload": "latest",
+    "sharp": "latest"
+  }
+}

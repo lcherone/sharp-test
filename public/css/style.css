@@ -1,0 +1,251 @@
+[v-cloak] {display: none}
+
+label{
+    font-size: 90%;
+}
+
+.draggable {
+    z-index:1000
+}
+
+.image-wrap {
+    width: 100%;
+    height: 100%;
+}
+
+.image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* smartphone */
+
+.smartphone {
+    float: left;
+    width: 80px;
+    height: 120px;
+    margin: 0px 0 0 0;
+    border: 5px black solid;
+    border-top-width: 15px;
+    border-bottom-width: 20px;
+    border-radius: 10px;
+}
+
+.smartphone:before {
+    content: '';
+    display: block;
+    width: 15px;
+    height: 3px;
+    margin: -9px auto;
+    background: white;
+    border-radius: 4px;
+}
+
+.smartphone:after {
+    content: '';
+    display: block;
+    width: 12px;
+    height: 12px;
+    margin: 4px auto;
+    background: white;
+    border-radius: 10px;
+}
+
+.smartphone .content {
+    width: 70px;
+    height: 85px;
+    margin: 15px 0 0 0;
+    padding: 0px;
+    background: #f60000;
+}
+
+/* tablet */
+
+.tablet {
+    float: left;
+    width: 120px;
+    height: 160px;
+    margin: 0px 0px;
+    border: 5px black solid;
+    border-top-width: 15px;
+    border-bottom-width: 20px;
+    border-radius: 10px;
+}
+
+.tablet:before {
+    content: '';
+    display: block;
+    width: 15px;
+    height: 3px;
+    margin: -9px auto;
+    background: white;
+    border-radius: 4px;
+}
+
+.tablet:after {
+    content: '';
+    display: block;
+    width: 12px;
+    height: 12px;
+    margin: 4px auto;
+    background: white;
+    border-radius: 10px;
+}
+
+.tablet .content {
+    width: 110px;
+    height: 125px;
+    margin: 15px 0 0 0;
+    background: #38b8b8;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+/* laptop */
+
+.laptop {
+    float: left;
+    width: 200px;
+    height: 120px;
+    margin: 0px 0 9px 0;
+    border: 5px black solid;
+    border-radius: 2px;
+    background: green;
+}
+
+.laptop:before {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 40px;
+    height: 3px;
+    margin: 121px 0 0 80px;
+    background: white;
+    z-index: 1;
+}
+
+.laptop:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 220px;
+    height: 8px;
+    margin: 6px 0 0 -15px;
+    background: black;
+    border-radius: 2px;
+}
+
+.laptop .content {
+    width: 190px;
+    height: 110px;
+    margin: 0px 0 0 0;
+    padding: 0px;
+    background: white;
+    overflow: hidden;
+}
+
+/* The switch - the box around the slider */
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 35px;
+    height: 20px;
+}
+
+/* Hide default HTML checkbox */
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider */
+
+.switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 3px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked+.switch-slider {
+    background-color: #2196F3;
+}
+
+input:focus+.switch-slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.switch-slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(16px);
+}
+
+/* range */
+
+.slider-container {
+    width: 100%;
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 20px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.9;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #2196f3;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #2196f3;
+    cursor: pointer;
+}
+
+.slider[orient=vertical] {
+    writing-mode: bt-lr;
+    /* IE */
+    -webkit-appearance: slider-vertical;
+    /* WebKit */
+    width: 8px;
+    height: 175px;
+    padding: 0 5px;
+}
