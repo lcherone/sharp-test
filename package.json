@@ -3,11 +3,6 @@
   "version": "0.0.1",
   "private": true,
   "main": "./index.js",
-  "scripts": {
-    "dev": "node index.js",
-    "docker-dev": "bash ./start.sh",
-    "docker-clean": "bash ./cleanup.sh"
-  },
   "dependencies": {
     "ejs": "latest",
     "express": "latest",
