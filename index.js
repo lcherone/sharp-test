@@ -41,8 +41,8 @@ const defaults = {
 
 const limits = {
     resize: {
-        width: 1024,
-        height: 576,
+        width: 1330,
+        height: 1000
     }
 }
 
