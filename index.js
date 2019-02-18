@@ -88,12 +88,28 @@ app.post('/upload', function (req, res, next) {
 
     var stream = fs.createWriteStream("src/images/" + req.body.meta.name.split('.').slice(0, -1).join('.') + '.jpg');
     var newImageName = req.body.meta.name.split('.').slice(0, -1).join('.') + '.jpg';
-    stream.once('open', function (fd) {
+    stream.once('open', async function (fd) {
         stream.write(req.files.file.data);
         const key = hash('sha256', newImageName).toString('hex')
+
+        // add to cache
         images[key] = {
             name: newImageName
         };
+
+        // filesize
+        let { size, mtime } = fs.statSync('src/images/' + images[key].name).size
+        images[key].size = size
+        images[key].mtime = mtime
+
+        // metadata
+        const sharpImage = sharp('src/images/' + images[key].name);
+        let imageMetadata = await sharpImage.metadata()
+        delete imageMetadata.exif
+        delete imageMetadata.iptc
+        delete imageMetadata.xmp
+        images[key].metadata = imageMetadata
+
         stream.end();
     });
 
@@ -259,8 +275,9 @@ setInterval(() => {
 setInterval(async () => {
     for (let i in images) {
         // must have name.. obviously
-        if (!images[i].name) {
+        if (!images[i].name || !fs.existsSync('src/images/' + images[i].name)) {
             delete images[i]
+            continue;
         }
 
         // filesize

@@ -1,6 +1,8 @@
-var throttleTime = 200
+var throttleTime = 200;
 
-_.deepClone = function (val) { return JSON.parse(JSON.stringify(val)) };
+_.deepClone = function (val) {
+    return JSON.parse(JSON.stringify(val));
+};
 
 // target elements with the "draggable" class
 interact('.draggable').draggable({
@@ -14,9 +16,7 @@ interact('.draggable').draggable({
             y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
 
         // translate the element
-        target.style.webkitTransform =
-            target.style.transform =
-            'translate(' + x + 'px, ' + y + 'px)';
+        target.style.webkitTransform = target.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
 
         // update the posiion attributes
         target.setAttribute('data-x', x);
@@ -57,10 +57,12 @@ var vm = new Vue({
         'image.name': function () {
             //
             this.image.processing = true;
-            this.image.src = '/images/' + this.image.name + '?' + $.param(this.form.values)
+            this.image.src = '/images/' + this.image.name + '?' + $.param(this.form.values);
 
-            clearTimeout(this.loadingTimer)
-            this.loadingTimer = setTimeout(() => { this.image.processing = false; }, throttleTime + 10)
+            clearTimeout(this.loadingTimer);
+            this.loadingTimer = setTimeout(function () {
+                this.image.processing = false;
+            }.bind(this), throttleTime + 10);
 
             $.ajax({
                 type: "HEAD",
@@ -79,10 +81,12 @@ var vm = new Vue({
             handler: _.throttle(function () {
                 //
                 this.image.processing = true;
-                this.image.src = '/images/' + this.image.name + '?' + $.param(this.form.values)
+                this.image.src = '/images/' + this.image.name + '?' + $.param(this.form.values);
 
-                clearTimeout(this.loadingTimer)
-                this.loadingTimer = setTimeout(() => { this.image.processing = false; }, throttleTime + 10)
+                clearTimeout(this.loadingTimer);
+                this.loadingTimer = setTimeout(function () {
+                    this.image.processing = false;
+                }.bind(this), throttleTime + 10);
 
                 $.ajax({
                     type: "HEAD",
@@ -101,39 +105,37 @@ var vm = new Vue({
         }
     },
     created() {
-        this.form.values = _.deepClone(this.defaults)
-        this.getImages()
+        this.form.values = _.deepClone(this.defaults);
+        this.getImages();
     },
-    mounted() {
-        
-    },
+    mounted() { },
     methods: {
         getImages() {
             $.ajax({
                 type: "GET",
                 url: '/api/images',
-                dataType: 'json',
+                dataType: 'json'
             }).done(function (data) {
-                this.images = data
-            }.bind(this)).fail(function(err) {
-                this.state.errors.global = 'Failed to load images'
+                this.images = data;
+            }.bind(this)).fail(function (err) {
+                this.state.errors.global = 'Failed to load images';
             }.bind(this));
         },
         resetForm() {
-            this.form.values = _.deepClone(this.defaults)
+            this.form.values = _.deepClone(this.defaults);
         },
         setSize(x, y) {
-            this.form.values.resize.width = x
-            this.form.values.resize.height = y
+            this.form.values.resize.width = x;
+            this.form.values.resize.height = y;
         },
         editImage(image) {
-            this.image.name = image.name || 'default.jpg'
-            this.image.metadata = image.metadata || {}
-            this.image.size = image.size || 0
+            this.image.name = image.name || 'default.jpg';
+            this.image.metadata = image.metadata || {};
+            this.image.size = image.size || 0;
 
             this.$nextTick(function () {
-                this.state.page = 'edit'
-            })
+                this.state.page = 'edit';
+            });
         },
         uploadImage(event) {
             //
@@ -156,17 +158,29 @@ var vm = new Vue({
                 processData: false,
                 method: 'POST',
                 success: function (data) {
-                    this.image.processing = false;
                     if (data.error) {
-                        this.state.errors.global = data.error
+                        this.state.errors.global = data.error;
                     } else {
-                        this.getImages()
+                        $.ajax({
+                            type: "GET",
+                            url: '/api/images',
+                            dataType: 'json',
+                        }).done(function (data) {
+                            this.image.processing = false;
+                            this.images = data
+                            if (this.state.page === 'edit') {
+                                for (let i in this.images) {
+                                    if (this.images[i].name === event.target.files[0].name) {
+                                        this.editImage(this.images[i]);
+                                        break;
+                                    }
+                                }
+                            }
+                        }.bind(this)).fail(function (err) {
+                            this.state.errors.global = 'Failed to load images';
+                        }.bind(this));
                     }
-                }.bind(this),
-                complete: function (xhr, textStatus) {
-                    var Metadata = xhr.getAllResponseHeaders();
-                    console.log(Metadata)
-                }
+                }.bind(this)
             });
 
             /*

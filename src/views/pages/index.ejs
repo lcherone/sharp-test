@@ -280,8 +280,13 @@
                                 Bootstrap Cards
                             </a>
                         </li>
-                        <!-- <li class="nav-item">
+                        <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#tab-4" role="tab" aria-controls="tab-4" aria-selected="false">
+                                Bootstrap Thumbnails
+                            </a>
+                        </li>
+                        <!-- <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#tab-5" role="tab" aria-controls="tab-5" aria-selected="false">
                                 Devices
                             </a>
                         </li> -->
@@ -290,6 +295,7 @@
                     <br>
 
                     <!-- <pre>{{image}}</pre> -->
+                    {{ state.errors.global }}
 
                     <div class="tab-content">
                         <div id="tab-1" class="tab-pane fade show active">
@@ -304,27 +310,7 @@
                         </div>
                         <div id="tab-3" class="tab-pane fade">
                             <div class="row mb-3">
-                                <div class="col-4">
-                                    <div class="card draggable">
-                                        <img class="card-img-top drag-handle" :src="image.src" alt="Card image">
-                                        <div class="card-body">
-                                            <h4 class="card-title">John Doe</h4>
-                                            <p class="card-text">Some example text.</p>
-                                            <a href="#" class="btn btn-primary">See Profile</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="card draggable">
-                                        <img class="card-img-top drag-handle" :src="image.src" alt="Card image">
-                                        <div class="card-body">
-                                            <h4 class="card-title">John Doe</h4>
-                                            <p class="card-text">Some example text.</p>
-                                            <a href="#" class="btn btn-primary">See Profile</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4">
+                                <div class="col-3" v-for="i in 4">
                                     <div class="card draggable">
                                         <img class="card-img-top drag-handle" :src="image.src" alt="Card image">
                                         <div class="card-body">
@@ -336,7 +322,7 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-6">
+                                <div class="col-4" v-for="i in 3">
                                     <div class="card draggable">
                                         <img class="card-img-top drag-handle" :src="image.src" alt="Card image">
                                         <div class="card-body">
@@ -346,7 +332,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-6">
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-6" v-for="i in 2">
                                     <div class="card draggable">
                                         <img class="card-img-top drag-handle" :src="image.src" alt="Card image">
                                         <div class="card-body">
@@ -370,8 +358,38 @@
                                 </div>
                             </div>
                         </div>
-                        <!--
                         <div id="tab-4" class="tab-pane fade">
+                            <div class="row">
+                                <div class="col-3 mb-3 thumb" v-for="i in 4">
+                                    <div class="thumbnail">
+                                        <img class="img-thumbnail" :src="image.src" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 mb-3 thumb" v-for="i in 3">
+                                    <div class="thumbnail">
+                                        <img class="img-thumbnail" :src="image.src" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 mb-3 thumb" v-for="i in 2">
+                                    <div class="thumbnail">
+                                        <img class="img-thumbnail" :src="image.src" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 mb-3 thumb">
+                                    <div class="thumbnail">
+                                        <img class="img-thumbnail" :src="image.src" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--
+                        <div id="tab-5" class="tab-pane fade">
                             <div class="row">
                                 <div class="col-4">
                                     <div class="laptop draggable">
