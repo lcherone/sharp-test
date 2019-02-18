@@ -1,4 +1,6 @@
+//
 const express = require('express')
+const compression = require('compression');
 const fileUpload = require('express-fileupload');
 const sharp = require('sharp');
 const path = require('path');
@@ -6,26 +8,11 @@ const fs = require('fs');
 const app = express()
 const port = 3000
 
-const store = new (require('conf'))({
-    cwd: './',
-    encryptionKey: undefined,
-    fileExtension: 'json'
-});
-/*
-config.set('unicorn', '🦄');
-console.log(config.get('unicorn'));
-//=> '🦄'
-// Use dot-notation to access nested properties
-config.set('foo.bar', true);
-console.log(config.get('foo'));
-//=> {bar: true}
-config.delete('unicorn');
-console.log(config.get('unicorn'));
-*/
-
+app.set('views', path.join(__dirname, 'src/views'));
 app.set('view engine', 'ejs');
-app.use('/css', express.static('public/css'))
-app.use('/js', express.static('public/js'))
+app.use('/css', express.static('src/public/css'))
+app.use('/js', express.static('src/public/js'))
+app.use(compression());
 app.use(fileUpload());
 
 const defaults = {
@@ -69,6 +56,7 @@ var hash = function (algo, data) {
 };
 
 app.get('/', (req, res) => {
+    console.log(__dirname)
     res.render('pages/index', {
         defaults: defaults,
         limits: limits
@@ -98,9 +86,14 @@ app.post('/upload', function (req, res, next) {
 
     // this is not secure, just store as-is
 
-    var stream = fs.createWriteStream("./images/" + req.body.meta.name.split('.').slice(0, -1).join('.') + '.jpg');
+    var stream = fs.createWriteStream("src/images/" + req.body.meta.name.split('.').slice(0, -1).join('.') + '.jpg');
+    var newImageName = req.body.meta.name.split('.').slice(0, -1).join('.') + '.jpg';
     stream.once('open', function (fd) {
         stream.write(req.files.file.data);
+        const key = hash('sha256', newImageName).toString('hex')
+        images[key] = {
+            name: newImageName
+        };
         stream.end();
     });
 
@@ -177,7 +170,7 @@ app.get('/images/:imageName', async (req, res) => {
         options.jpg.quantizationTable = form.jpg.quantizationTable && form.jpg.quantizationTable >= 0 && form.jpg.quality <= 8 ? form.jpg.quantizationTable : options.jpg.quantizationTable
     }
 
-    const imagePath = path.join('./images/', path.basename(req.params.imageName));
+    const imagePath = path.join('src/images/', path.basename(req.params.imageName));
 
     // check for cached version
     const imageStoreKey = hash('sha256', JSON.stringify({ a: imagePath, b: form })).toString('hex')
@@ -247,7 +240,8 @@ app.get('/images/:imageName', async (req, res) => {
 })
 
 // images is simply a list of all the images
-let images = store.get('images', {})
+let images = {}
+/*
 const shuffle = function (items) {
     for (let i = items.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -259,11 +253,10 @@ const shuffle = function (items) {
 setInterval(() => {
     shuffle(images);
 }, 5000)
+*/
 
 // persist a record of more info every 15 seconds
 setInterval(async () => {
-    //
-    let changed = false
     for (let i in images) {
         // must have name.. obviously
         if (!images[i].name) {
@@ -272,7 +265,7 @@ setInterval(async () => {
 
         // filesize
         if (!images[i].size) {
-            let { size, mtime } = fs.statSync('./images/' + images[i].name).size
+            let { size, mtime } = fs.statSync('src/images/' + images[i].name).size
             images[i].size = size
             images[i].mtime = mtime
             changed = true
@@ -280,7 +273,7 @@ setInterval(async () => {
 
         // metadata
         if (!images[i].metadata) {
-            const sharpImage = sharp('./images/' + images[i].name);
+            const sharpImage = sharp('src/images/' + images[i].name);
             let imageMetadata = await sharpImage.metadata()
             delete imageMetadata.exif
             delete imageMetadata.iptc
@@ -289,7 +282,6 @@ setInterval(async () => {
             changed = true
         }
     }
-    !changed || store.set('images', images)
 }, 5000)
 
 app.get('/api/images', (req, res, next) => {
@@ -297,13 +289,13 @@ app.get('/api/images', (req, res, next) => {
     if (Object.keys(images).length) {
         return res.json(images)
     }
-    fs.readdir('./images', function (err, items) {
+    fs.readdir('src/images', function (err, items) {
         if (err) return next(err)
         //
         let data = {}
         for (let i in items) {
             const key = hash('sha256', items[i]).toString('hex')
-            const { size, mtime } = fs.statSync('./images/' + items[i])
+            const { size, mtime } = fs.statSync('src/images/' + items[i])
 
             data[key] = {
                 name: items[i],

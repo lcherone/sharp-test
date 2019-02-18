@@ -1,9 +1,20 @@
 {
+  "name": "sharp-test",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./index.js",
+  "scripts": {
+    "dev": "node index.js",
+    "docker-dev": "bash ./start.sh",
+    "docker-clean": "bash ./cleanup.sh"
+  },
   "dependencies": {
-    "conf": "latest",
     "ejs": "latest",
     "express": "latest",
     "express-fileupload": "latest",
-    "sharp": "latest"
+    "compression": "^1.7.3",
+    "sharp": "latest",
+    "socket.io": "^2.1.1",
+    "socket.io-client": "^2.0.4"
   }
 }
