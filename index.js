@@ -56,7 +56,6 @@ var hash = function (algo, data) {
 };
 
 app.get('/', (req, res) => {
-    console.log(__dirname)
     res.render('pages/index', {
         defaults: defaults,
         limits: limits
