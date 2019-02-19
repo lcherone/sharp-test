@@ -11,6 +11,8 @@ services:
   app:
     image: sharp-test
     build: .
+    volumes:
+      - ./src/images:/src/images
     environment:
       NODE_ENV: production
     ports:

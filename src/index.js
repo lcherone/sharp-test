@@ -225,27 +225,33 @@ app.get('/images/:imageName', async (req, res) => {
                     .resize(options.resize)
                     .jpeg(options.jpg)
                     .toBuffer(async function (err, data) {
-                        res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-                        res.header('Expires', '-1');
-                        res.header('Pragma', 'no-cache');
-
-                        const metadata = await sharp(data).metadata();
-                        delete metadata.exif;
-                        delete metadata.iptc;
-                        delete metadata.icc;
-                        delete metadata.xmp;
-                        res.header('Metadata', JSON.stringify({
-                            "processing": false,
-                            "name": req.params.imageName,
-                            "mtime": new Date(),
-                            "size": data.byteLength,
-                            "metadata": metadata
-                        }));
-
                         if (err) {
-                            console.log(err)
-                            res.status(500).send(err.message);
+                            // more then likly the original image is broken, add it to errors
+                            const key = hash('sha256', path.basename(req.params.imageName)).toString('hex');
+                            images_errors[key] = {
+                                file: path.basename(req.params.imageName),
+                                error: err.message
+                            };
+                            console.log(err);
+                            res.status(415).send(err.message);
                         } else {
+                            res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+                            res.header('Expires', '-1');
+                            res.header('Pragma', 'no-cache');
+
+                            const metadata = await sharp(data).metadata();
+                            delete metadata.exif;
+                            delete metadata.iptc;
+                            delete metadata.icc;
+                            delete metadata.xmp;
+                            res.header('Metadata', JSON.stringify({
+                                "processing": false,
+                                "name": req.params.imageName,
+                                "mtime": new Date(),
+                                "size": data.byteLength,
+                                "metadata": metadata
+                            }));
+
                             console.log('Image resized: ' + path.basename(req.params.imageName));
                             console.log('Memory usage: ' + getMemUsage() + 'MB');
                             imageStore[imageStoreKey] = data;
@@ -261,6 +267,7 @@ app.get('/images/:imageName', async (req, res) => {
 
 //
 let images = {};
+let images_errors = {};
 app.get('/api/images', (req, res, next) => {
     // cache
     if (Object.keys(images).length) {
@@ -272,24 +279,35 @@ app.get('/api/images', (req, res, next) => {
         let data = {};
         for (let i in items) {
             const key = hash('sha256', items[i]).toString('hex');
-            const { size, mtime } = fs.statSync(path.join(imagesDir, items[i]));
+            try {
+                const { size, mtime } = fs.statSync(path.join(imagesDir, items[i]));
 
-            const sharpImage = sharp(path.join(imagesDir, items[i]));
-            let imageMetadata = await sharpImage.metadata();
-            delete imageMetadata.exif;
-            delete imageMetadata.iptc;
-            delete imageMetadata.xmp;
+                const sharpImage = sharp(path.join(imagesDir, items[i]));
+                let imageMetadata = await sharpImage.metadata();
+                delete imageMetadata.exif;
+                delete imageMetadata.iptc;
+                delete imageMetadata.xmp;
 
-            data[key] = {
-                name: items[i],
-                size: size,
-                mtime: mtime,
-                metadata: imageMetadata
-            };
+                data[key] = {
+                    name: items[i],
+                    size: size,
+                    mtime: mtime,
+                    metadata: imageMetadata
+                };
+            } catch (e) {
+                console.log('Error:', path.join(imagesDir, items[i]), e);
+                images_errors[key] = {
+                    file: items[i],
+                    error: e.message
+                }
+            }
         }
         images = data;
         res.json(data);
     });
+})
+app.get('/api/images/errors', (req, res, next) => {
+    res.json(images_errors);
 })
 
 app.delete('/api/images/:name', (req, res, next) => {
@@ -298,7 +316,7 @@ app.delete('/api/images/:name', (req, res, next) => {
         //
         images = {};
         res.json({ status: true });
-    }); 
+    });
 })
 
 app.listen(port, () => console.log(`Server started: http://localhost:${port}`));
