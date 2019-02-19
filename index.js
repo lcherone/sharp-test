@@ -98,7 +98,7 @@ app.post('/upload', function (req, res, next) {
         };
 
         // filesize
-        let { size, mtime } = fs.statSync('src/images/' + images[key].name).size
+        let { size, mtime } = fs.statSync('src/images/' + images[key].name)
         images[key].size = size
         images[key].mtime = mtime
 
@@ -255,23 +255,8 @@ app.get('/images/:imageName', async (req, res) => {
     }
 })
 
-// images is simply a list of all the images
+//
 let images = {}
-/*
-const shuffle = function (items) {
-    for (let i = items.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [items[i], items[j]] = [items[j], items[i]];
-    }
-    return items
-}
-// shuffle and store every 5 seconds
-setInterval(() => {
-    shuffle(images);
-}, 5000)
-*/
-
-// persist a record of more info every 15 seconds
 setInterval(async () => {
     for (let i in images) {
         // must have name.. obviously
