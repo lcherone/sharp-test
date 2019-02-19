@@ -1,5 +1,5 @@
 //
-const express = require('express')
+const express = require('express');
 const compression = require('compression');
 const fileUpload = require('express-fileupload');
 const sharp = require('sharp');
@@ -9,14 +9,14 @@ const app = express();
 
 //
 const port = process.env.PORT || 3000;
-const publicDir = path.join(__dirname, 'public')
-const imagesDir = path.join(__dirname, 'images')
+const publicDir = path.join(__dirname, 'public');
+const imagesDir = path.join(__dirname, 'images');
 
 //
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.use('/css', express.static(publicDir + '/css'))
-app.use('/js', express.static(publicDir + '/js'))
+app.use('/css', express.static(publicDir + '/css'));
+app.use('/js', express.static(publicDir + '/js'));
 app.use(compression());
 app.use(fileUpload());
 
@@ -43,17 +43,17 @@ const defaults = {
         quantizationTable: 0,       // Number quantization table to use, integer 0-8, requires mozjpeg (optional, default 0)
         force: true                 // Boolean force JPEG output, otherwise attempt to use input format (optional, default true)
     }
-}
+};
 
 const limits = {
     resize: {
         width: 1330,
         height: 1000
     }
-}
+};
 
 const getMemUsage = () => {
-    return (Math.round(process.memoryUsage().heapUsed / 1024 / 1024 * 100) / 100)
+    return (Math.round(process.memoryUsage().heapUsed / 1024 / 1024 * 100) / 100);
 }
 
 const crypto = require('crypto');
@@ -66,7 +66,7 @@ app.get('/', (req, res) => {
         defaults: defaults,
         limits: limits
     });
-})
+});
 
 app.post('/upload', function (req, res, next) {
     if (Object.keys(req.files).length == 0) {
@@ -95,7 +95,7 @@ app.post('/upload', function (req, res, next) {
     var newImageName = req.body.meta.name.split('.').slice(0, -1).join('.') + '.jpg';
     stream.once('open', async function (fd) {
         stream.write(req.files.file.data);
-        const key = hash('sha256', newImageName).toString('hex')
+        const key = hash('sha256', newImageName).toString('hex');
 
         // add to cache
         images[key] = {
@@ -103,17 +103,17 @@ app.post('/upload', function (req, res, next) {
         };
 
         // filesize
-        let { size, mtime } = fs.statSync(path.join(imagesDir, images[key].name))
-        images[key].size = size
-        images[key].mtime = mtime
+        let { size, mtime } = fs.statSync(path.join(imagesDir, images[key].name));
+        images[key].size = size;
+        images[key].mtime = mtime;
 
         // metadata
         const sharpImage = sharp(path.join(imagesDir, images[key].name));
-        let imageMetadata = await sharpImage.metadata()
-        delete imageMetadata.exif
-        delete imageMetadata.iptc
-        delete imageMetadata.xmp
-        images[key].metadata = imageMetadata
+        let imageMetadata = await sharpImage.metadata();
+        delete imageMetadata.exif;
+        delete imageMetadata.iptc;
+        delete imageMetadata.xmp;
+        images[key].metadata = imageMetadata;
 
         stream.end();
     });
@@ -124,87 +124,87 @@ app.post('/upload', function (req, res, next) {
 var imageStore = {}
 
 app.get('/images/:imageName', async (req, res) => {
-    let options = JSON.parse(JSON.stringify(defaults))
+    let options = JSON.parse(JSON.stringify(defaults));
 
-    let form = req.query || {}
+    let form = req.query || {};
 
     // resize
     if (form.resize) {
         //
-        form.resize.width = parseInt(form.resize.width, 10) || options.resize.width
-        options.resize.width = form.resize.width && form.resize.width >= 1 && form.resize.width <= limits.resize.width ? form.resize.width : options.resize.width
+        form.resize.width = parseInt(form.resize.width, 10) || options.resize.width;
+        options.resize.width = form.resize.width && form.resize.width >= 1 && form.resize.width <= limits.resize.width ? form.resize.width : options.resize.width;
 
         //
-        form.resize.height = parseInt(form.resize.height, 10) || options.resize.height
-        options.resize.height = form.resize.height && form.resize.height >= 1 && form.resize.height <= limits.resize.height ? form.resize.height : options.resize.height
+        form.resize.height = parseInt(form.resize.height, 10) || options.resize.height;
+        options.resize.height = form.resize.height && form.resize.height >= 1 && form.resize.height <= limits.resize.height ? form.resize.height : options.resize.height;
 
         //
         if (form.resize.autoWidth == 'true' || form.resize.autoHeight == 'true') {
             if (form.resize.autoWidth == 'true') {
-                delete options.resize.height
+                delete options.resize.height;
             }
             if (form.resize.autoHeight == 'true') {
-                delete options.resize.width
+                delete options.resize.width;
             }
         }
 
         //
-        options.resize.position = form.resize.position ? form.resize.position : 'centre'
+        options.resize.position = form.resize.position ? form.resize.position : 'centre';
 
         //
-        options.resize.background = form.resize.background ? form.resize.background : { r: 0, g: 0, b: 0, alpha: 1 }
+        options.resize.background = form.resize.background ? form.resize.background : { r: 0, g: 0, b: 0, alpha: 1 };
         if (typeof options.resize.background === 'string' && options.resize.background === 'transparent') {
-            options.resize.background = { r: 0, g: 0, b: 0, alpha: 0 }
+            options.resize.background = { r: 0, g: 0, b: 0, alpha: 0 };
         }
 
         // 
-        options.resize.fit = form.resize.fit ? form.resize.fit : options.resize.fit
+        options.resize.fit = form.resize.fit ? form.resize.fit : options.resize.fit;
         if (options.resize.fit === 'none') {
-            delete options.resize.fit
-            delete options.resize.position
-            delete options.resize.background
+            delete options.resize.fit;
+            delete options.resize.position;
+            delete options.resize.background;
         }
 
         //
-        options.resize.kernel = form.resize.kernel ? form.resize.kernel : options.resize.kernel
+        options.resize.kernel = form.resize.kernel ? form.resize.kernel : options.resize.kernel;
 
         //
-        options.resize.withoutEnlargement = (form.resize.withoutEnlargement == 'true')
+        options.resize.withoutEnlargement = (form.resize.withoutEnlargement == 'true');
 
         //
-        options.resize.fastShrinkOnLoad = (form.resize.fastShrinkOnLoad == 'true')
+        options.resize.fastShrinkOnLoad = (form.resize.fastShrinkOnLoad == 'true');
     }
 
     // jpg
     if (form.jpg) {
         //
-        form.jpg.quality = parseInt(form.jpg.quality, 10)
-        options.jpg.quality = form.jpg.quality && form.jpg.quality >= 1 && form.jpg.quality <= 100 ? form.jpg.quality : options.jpg.quality
+        form.jpg.quality = parseInt(form.jpg.quality, 10);
+        options.jpg.quality = form.jpg.quality && form.jpg.quality >= 1 && form.jpg.quality <= 100 ? form.jpg.quality : options.jpg.quality;
         //
-        options.jpg.progressive = (form.jpg.progressive == 'true')
-        options.jpg.chromaSubsampling = form.jpg.chromaSubsampling === '4:4:4' ? '4:4:4' : '4:2:0'
-        options.jpg.trellisQuantisation = (form.jpg.trellisQuantisation == 'true')
-        options.jpg.overshootDeringing = (form.jpg.overshootDeringing == 'true')
-        options.jpg.optimizeScans = (form.jpg.optimizeScans == 'true')
-        options.jpg.optimizeCoding = (form.jpg.optimizeCoding == 'true')
-        options.jpg.quantizationTable = parseInt(form.jpg.quantizationTable, 10)
-        options.jpg.quantizationTable = form.jpg.quantizationTable && form.jpg.quantizationTable >= 0 && form.jpg.quality <= 8 ? form.jpg.quantizationTable : options.jpg.quantizationTable
+        options.jpg.progressive = (form.jpg.progressive == 'true');
+        options.jpg.chromaSubsampling = form.jpg.chromaSubsampling === '4:4:4' ? '4:4:4' : '4:2:0';
+        options.jpg.trellisQuantisation = (form.jpg.trellisQuantisation == 'true');
+        options.jpg.overshootDeringing = (form.jpg.overshootDeringing == 'true');
+        options.jpg.optimizeScans = (form.jpg.optimizeScans == 'true');
+        options.jpg.optimizeCoding = (form.jpg.optimizeCoding == 'true');
+        options.jpg.quantizationTable = parseInt(form.jpg.quantizationTable, 10);
+        options.jpg.quantizationTable = form.jpg.quantizationTable && form.jpg.quantizationTable >= 0 && form.jpg.quality <= 8 ? form.jpg.quantizationTable : options.jpg.quantizationTable;
     }
 
     const imagePath = path.join(imagesDir, path.basename(req.params.imageName));
 
     // check for cached version
-    const imageStoreKey = hash('sha256', JSON.stringify({ a: imagePath, b: form })).toString('hex')
+    const imageStoreKey = hash('sha256', JSON.stringify({ a: imagePath, b: form })).toString('hex');
     if (imageStore[imageStoreKey]) {
-        console.log('Using cached image: ' + path.basename(req.params.imageName))
+        console.log('Using cached image: ' + path.basename(req.params.imageName));
         res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
         res.header('Expires', '-1');
         res.header('Pragma', 'no-cache');
         const metadata = await sharp(imageStore[imageStoreKey]).metadata();
-        delete metadata.exif
-        delete metadata.iptc
-        delete metadata.icc
-        delete metadata.xmp
+        delete metadata.exif;
+        delete metadata.iptc;
+        delete metadata.icc;
+        delete metadata.xmp;
         res.header('Metadata', JSON.stringify({
             "processing": false,
             "name": req.params.imageName,
@@ -213,7 +213,7 @@ app.get('/images/:imageName', async (req, res) => {
             "metadata": metadata
         }));
         res.header('Content-Type', 'image/jpeg').send(imageStore[imageStoreKey]);
-        return
+        return;
     }
 
     if (imagePath.split('.').pop() === 'jpg' && fs.existsSync(imagePath)) {
@@ -230,10 +230,10 @@ app.get('/images/:imageName', async (req, res) => {
                         res.header('Pragma', 'no-cache');
 
                         const metadata = await sharp(data).metadata();
-                        delete metadata.exif
-                        delete metadata.iptc
-                        delete metadata.icc
-                        delete metadata.xmp
+                        delete metadata.exif;
+                        delete metadata.iptc;
+                        delete metadata.icc;
+                        delete metadata.xmp;
                         res.header('Metadata', JSON.stringify({
                             "processing": false,
                             "name": req.params.imageName,
@@ -246,10 +246,9 @@ app.get('/images/:imageName', async (req, res) => {
                             console.log(err)
                             res.status(500).send(err.message);
                         } else {
-                            console.log('Image resized: ' + path.basename(req.params.imageName))
-                            //console.log(options)
-                            console.log('Memory usage: ' + getMemUsage() + 'MB')
-                            imageStore[imageStoreKey] = data
+                            console.log('Image resized: ' + path.basename(req.params.imageName));
+                            console.log('Memory usage: ' + getMemUsage() + 'MB');
+                            imageStore[imageStoreKey] = data;
                             res.header('Content-Type', 'image/jpeg').send(data);
                         }
                     });
@@ -261,35 +260,35 @@ app.get('/images/:imageName', async (req, res) => {
 })
 
 //
-let images = {}
+let images = {};
 app.get('/api/images', (req, res, next) => {
     // cache
     if (Object.keys(images).length) {
-        return res.json(images)
+        return res.json(images);
     }
     fs.readdir(imagesDir, async function (err, items) {
-        if (err) return next(err)
+        if (err) return next(err);
         //
-        let data = {}
+        let data = {};
         for (let i in items) {
-            const key = hash('sha256', items[i]).toString('hex')
-            const { size, mtime } = fs.statSync(path.join(imagesDir, items[i]))
+            const key = hash('sha256', items[i]).toString('hex');
+            const { size, mtime } = fs.statSync(path.join(imagesDir, items[i]));
 
             const sharpImage = sharp(path.join(imagesDir, items[i]));
-            let imageMetadata = await sharpImage.metadata()
-            delete imageMetadata.exif
-            delete imageMetadata.iptc
-            delete imageMetadata.xmp
+            let imageMetadata = await sharpImage.metadata();
+            delete imageMetadata.exif;
+            delete imageMetadata.iptc;
+            delete imageMetadata.xmp;
 
             data[key] = {
                 name: items[i],
                 size: size,
                 mtime: mtime,
                 metadata: imageMetadata
-            }
+            };
         }
-        images = data
-        res.json(data)
+        images = data;
+        res.json(data);
     });
 })
 
@@ -297,9 +296,9 @@ app.delete('/api/images/:name', (req, res, next) => {
     fs.unlink(path.join(imagesDir, req.params.name), function (err) {
         if (err) return next(err);
         //
-        images = {}
+        images = {};
         res.json({ status: true });
     }); 
 })
 
-app.listen(port, () => console.log(`Server started: http://localhost:${port}`))
+app.listen(port, () => console.log(`Server started: http://localhost:${port}`));

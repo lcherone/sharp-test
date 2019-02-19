@@ -2,14 +2,12 @@
   "name": "sharp-test",
   "version": "0.0.1",
   "private": true,
-  "scripts": {
-    "serve": "node ./src"
-  },
+  "main": "./src/index.js",
   "dependencies": {
-    "ejs": "latest",
-    "express": "latest",
-    "express-fileupload": "latest",
-    "compression": "latest",
-    "sharp": "latest"
+    "compression": "^1.7.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "express-fileupload": "^1.1.1-alpha.3",
+    "sharp": "^0.21.3"
   }
 }
