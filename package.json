@@ -2,14 +2,11 @@
   "name": "sharp-test",
   "version": "0.0.1",
   "private": true,
-  "main": "./index.js",
   "dependencies": {
     "ejs": "latest",
     "express": "latest",
     "express-fileupload": "latest",
-    "compression": "^1.7.3",
-    "sharp": "latest",
-    "socket.io": "^2.1.1",
-    "socket.io-client": "^2.0.4"
+    "compression": "latest",
+    "sharp": "latest"
   }
 }

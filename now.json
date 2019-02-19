@@ -1,0 +1,14 @@
+{
+    "version": 2,
+    "name": "sharp-test",
+    "builds": [
+      {"src": "index.js", "use": "@now/node-server"}
+    ],
+    "routes": [
+      {"src": "^/api/images", "dest": "index.js"},
+      {"src": "^/images/(.*)", "dest": "index.js"},
+      {"src": "^/upload", "dest": "index.js"},
+      {"src": ".*", "dest": "index.js"}
+    ]
+  }
+  
