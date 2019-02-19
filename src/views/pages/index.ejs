@@ -252,12 +252,11 @@
                                     </div>
 
                                     <div class="form-group row">
-                                        <label class="col-md-12 control-label" for="textinput">QuantizationTable Table: <span class="badge badge-secondary">{{ form.values.jpg.quantizationTable }}</span></label>
+                                        <label class="col-md-12 control-label" for="textinput">Quantization Table: <span class="badge badge-secondary">{{ form.values.jpg.quantizationTable }}</span></label>
                                         <div class="col-md-12">
                                             <input type="range" min="0" max="8" value="<%- defaults.jpg.quantizationTable %>" class="slider" v-model="form.values.jpg.quantizationTable">
                                         </div>
                                     </div>
-
                                 </fieldset>
                             </form>
                         </div>
