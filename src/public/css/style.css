@@ -1,11 +1,13 @@
-[v-cloak] {display: none}
+[v-cloak] {
+    display: none
+}
 
-label{
+label {
     font-size: 90%;
 }
 
 .draggable {
-    z-index:1000
+    z-index: 1000
 }
 
 .image-wrap {
@@ -17,7 +19,9 @@ label{
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
+    object-position: center center;
+    border-radius: 5px;
+    /* margin-bottom: -100px; */
 }
 
 /* smartphone */
@@ -248,4 +252,112 @@ input:checked+.switch-slider:before {
     width: 8px;
     height: 175px;
     padding: 0 5px;
+}
+
+.profile-avatar {
+    margin-top: 0px
+}
+
+.profile-content {
+    margin-bottom: 10px;
+}
+
+.profile-description,
+.profile-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.profile-page.profile-cover {
+    height: 30vw
+}
+
+.profile-page.profile-avatar {
+    margin: 0 auto;
+    margin-top: -18vw;
+    text-align: center;
+    width: 20vw;
+    height: 20vw;
+    border: 2px white solid;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #e7e7e7;
+}
+
+.profile-page.profile-name {
+    font-size: 1.3vw;
+    font-weight: bold;
+}
+
+.profile-page.profile-subhead {
+    font-size: 1vw;
+    font-weight: bold
+}
+
+.profile-tabs {
+    margin-left: 0px;
+    background: #ffffff60;
+    border-radius: 30px 0px 5px 0px;
+}
+
+.profile-tabs li a {
+    padding: .5rem .6rem;
+    text-shadow: 0px 0px 20px white;
+}
+
+@media (min-width: 320px) and (max-width: 480px) {
+    .profile-tabs {
+        font-size: 4vw
+    }
+    .profile-page.profile-name {
+        font-size: 5.5vw
+    }
+    .profile-page.profile-subhead {
+        font-size: 3.9vw
+    }
+    .profile-page.profile-avatar {
+        width: 45vw;
+        height: 45vw;
+        margin-top: -33vw;
+    }
+    .profile-page.profile-cover {
+        height: 45vw;
+    }
+    .profile-actions .btn-sm {
+        font-size: 3.4vw;
+    }
+}
+
+@media only screen and (min-width: 769px) {
+    .profile-page.profile-cover {
+        height: 16vw;
+    }
+    .profile-page.profile-avatar {
+        width: 10vw;
+        height: 10vw;
+        margin-top: -7vw;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .profile-actions .btn-sm {
+        font-size: 1.5vw;
+    }
+    .profile-page.profile-subhead {
+        font-size: 1.8vw
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+    .profile-actions .btn-sm {
+        font-size: .9vw;
+    }
+    .profile-page.profile-subhead {
+        font-size: 1.6vw
+    }
 }

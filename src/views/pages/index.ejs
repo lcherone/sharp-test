@@ -285,6 +285,11 @@
                                 Bootstrap Thumbnails
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#tab-5" role="tab" aria-controls="tab-5" aria-selected="false">
+                                Bootstrap Profile
+                            </a>
+                        </li>
                         <!-- <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#tab-5" role="tab" aria-controls="tab-5" aria-selected="false">
                                 Devices
@@ -388,6 +393,56 @@
                                 </div>
                             </div>
                         </div>
+                        <div id="tab-5" class="tab-pane fade">
+                            <div class="image-wrap profile-page profile-cover">
+                                <img class="img" :src="image.src" />
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-sm-4">
+                                    <div class="profile-page profile-avatar image-wrap">
+                                        <img class="img" :src="image.src" />
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 text-center">
+                                            <div class="profile-page profile-content">
+                                                <div class="text-center pt-2 pb-2">
+                                                    <p class="profile-page profile-name color-default">
+                                                        <i aria-hidden="true" class="fa fa-circle text-success"></i>
+                                                        Joe Blogs, 58<br>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 p-3 col-sm-8">
+                                    <ul role="tablist" class="nav nav-tabs profile-tabs" style="margin-top: -58px;margin-right: -1px">
+                                        <li class="nav-item">
+                                            <a href="javascript:void(0)" class="nav-link active">
+                                                About
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div class="tab-pane fade show active" style="padding-top: 10px;">
+                                            <div class="profile-tags">
+                                                <div style="height: 26px">
+                                                    <div style="left: 0px; transform: translateX(0%);">
+                                                        <span class="badge badge-primary is-selected">NodeJS</span>
+                                                        <span class="badge badge-primary">Sharp</span>
+                                                        <span class="badge badge-primary">Bootstrap</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="timeline-story" style="padding: 8px 0px 10px 14px;background: rgb(247, 247, 247); border: 1px solid rgb(223, 223, 223); margin-bottom: 10px;">
+                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam vulputate arcu eu massa gravida cursus.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!--
                         <div id="tab-5" class="tab-pane fade">
                             <div class="row">
@@ -426,7 +481,7 @@
                                 <span class="sr-only">Loading...</span>
                             </template>
                         </div>
-                        <div class="list-group-item d-flex justify-content-between align-items-center">Name:&nbsp; <a :href="image.src" target="_blank" class="text-truncate">{{ image.name }}</a></div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">Name:&nbsp; <a :href="image.src" target="_blank" class="text-truncate">{{ image.name }}</a> <a :href="image.src" download class="text-truncate"><i class="fa fa-download" aria-hidden="true"></i></a></div>
                         <div class="list-group-item d-flex justify-content-between align-items-center text-truncate">Last Modified:&nbsp; <span class="text-truncate">{{ image.mtime }}</span></div>
                         <div class="list-group-item d-flex justify-content-between align-items-center text-truncate">File Size:&nbsp; <span class="text-truncate">{{ formatBytes(image.size) }}</span></div>
                         <div class="list-group-item d-flex justify-content-between align-items-center text-truncate" v-if="image.metadata">Format:&nbsp; <span class="text-truncate">{{ image.metadata.format }}</span></div>
