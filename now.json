@@ -2,13 +2,15 @@
     "version": 2,
     "name": "sharp-test",
     "builds": [
-      {"src": "index.js", "use": "@now/node-server"}
+      {"src": "src/index.js", "use": "@now/node-server"}
     ],
     "routes": [
-      {"src": "^/api/images", "dest": "index.js"},
-      {"src": "^/images/(.*)", "dest": "index.js"},
-      {"src": "^/upload", "dest": "index.js"},
-      {"src": ".*", "dest": "index.js"}
+      {"src": "^/api/images", "dest": "src/index.js"},
+      {"src": "^/images/(.*)", "dest": "src/index.js"},
+      {"src": "^/upload", "dest": "src/index.js"},
+      {"src": "^/css/style.css", "dest": "src/index.js"},
+      {"src": "^/js/app.js", "dest": "src/index.js"},
+      {"src": ".*", "dest": "src/index.js"}
     ]
   }
   

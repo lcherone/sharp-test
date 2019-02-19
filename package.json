@@ -2,6 +2,9 @@
   "name": "sharp-test",
   "version": "0.0.1",
   "private": true,
+  "scripts": {
+    "serve": "node ./src"
+  },
   "dependencies": {
     "ejs": "latest",
     "express": "latest",

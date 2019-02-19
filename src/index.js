@@ -5,16 +5,22 @@ const fileUpload = require('express-fileupload');
 const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
-const app = express()
-const port = 3000
+const app = express();
 
-app.set('views', path.join(__dirname, 'src/views'));
+//
+const port = process.env.PORT || 3000;
+const publicDir = path.join(__dirname, 'public')
+const imagesDir = path.join(__dirname, 'images')
+
+//
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.use('/css', express.static('src/public/css'))
-app.use('/js', express.static('src/public/js'))
+app.use('/css', express.static(publicDir + '/css'))
+app.use('/js', express.static(publicDir + '/js'))
 app.use(compression());
 app.use(fileUpload());
 
+//
 const defaults = {
     resize: {
         width: 640,
@@ -85,7 +91,7 @@ app.post('/upload', function (req, res, next) {
 
     // this is not secure, just store as-is
 
-    var stream = fs.createWriteStream("src/images/" + req.body.meta.name.split('.').slice(0, -1).join('.') + '.jpg');
+    var stream = fs.createWriteStream(path.join(imagesDir, req.body.meta.name.split('.').slice(0, -1).join('.') + '.jpg'));
     var newImageName = req.body.meta.name.split('.').slice(0, -1).join('.') + '.jpg';
     stream.once('open', async function (fd) {
         stream.write(req.files.file.data);
@@ -97,12 +103,12 @@ app.post('/upload', function (req, res, next) {
         };
 
         // filesize
-        let { size, mtime } = fs.statSync('src/images/' + images[key].name)
+        let { size, mtime } = fs.statSync(path.join(imagesDir, images[key].name))
         images[key].size = size
         images[key].mtime = mtime
 
         // metadata
-        const sharpImage = sharp('src/images/' + images[key].name);
+        const sharpImage = sharp(path.join(imagesDir, images[key].name));
         let imageMetadata = await sharpImage.metadata()
         delete imageMetadata.exif
         delete imageMetadata.iptc
@@ -185,7 +191,7 @@ app.get('/images/:imageName', async (req, res) => {
         options.jpg.quantizationTable = form.jpg.quantizationTable && form.jpg.quantizationTable >= 0 && form.jpg.quality <= 8 ? form.jpg.quantizationTable : options.jpg.quantizationTable
     }
 
-    const imagePath = path.join('src/images/', path.basename(req.params.imageName));
+    const imagePath = path.join(imagesDir, path.basename(req.params.imageName));
 
     // check for cached version
     const imageStoreKey = hash('sha256', JSON.stringify({ a: imagePath, b: form })).toString('hex')
@@ -256,57 +262,44 @@ app.get('/images/:imageName', async (req, res) => {
 
 //
 let images = {}
-setInterval(async () => {
-    for (let i in images) {
-        // must have name.. obviously
-        if (!images[i].name || !fs.existsSync('src/images/' + images[i].name)) {
-            delete images[i]
-            continue;
-        }
-
-        // filesize
-        if (!images[i].size) {
-            let { size, mtime } = fs.statSync('src/images/' + images[i].name).size
-            images[i].size = size
-            images[i].mtime = mtime
-            changed = true
-        }
-
-        // metadata
-        if (!images[i].metadata) {
-            const sharpImage = sharp('src/images/' + images[i].name);
-            let imageMetadata = await sharpImage.metadata()
-            delete imageMetadata.exif
-            delete imageMetadata.iptc
-            delete imageMetadata.xmp
-            images[i].metadata = imageMetadata
-            changed = true
-        }
-    }
-}, 5000)
-
 app.get('/api/images', (req, res, next) => {
     // cache
     if (Object.keys(images).length) {
         return res.json(images)
     }
-    fs.readdir('src/images', function (err, items) {
+    fs.readdir(imagesDir, async function (err, items) {
         if (err) return next(err)
         //
         let data = {}
         for (let i in items) {
             const key = hash('sha256', items[i]).toString('hex')
-            const { size, mtime } = fs.statSync('src/images/' + items[i])
+            const { size, mtime } = fs.statSync(path.join(imagesDir, items[i]))
+
+            const sharpImage = sharp(path.join(imagesDir, items[i]));
+            let imageMetadata = await sharpImage.metadata()
+            delete imageMetadata.exif
+            delete imageMetadata.iptc
+            delete imageMetadata.xmp
 
             data[key] = {
                 name: items[i],
                 size: size,
-                mtime: mtime
+                mtime: mtime,
+                metadata: imageMetadata
             }
         }
         images = data
         res.json(data)
     });
+})
+
+app.delete('/api/images/:name', (req, res, next) => {
+    fs.unlink(path.join(imagesDir, req.params.name), function (err) {
+        if (err) return next(err);
+        //
+        images = {}
+        res.json({ status: true });
+    }); 
 })
 
 app.listen(port, () => console.log(`Server started: http://localhost:${port}`))

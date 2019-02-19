@@ -108,7 +108,9 @@ var vm = new Vue({
         this.form.values = _.deepClone(this.defaults);
         this.getImages();
     },
-    mounted() { },
+    mounted() {
+        $('[data-toggle="tooltip"]').tooltip()
+    },
     methods: {
         getImages() {
             $.ajax({
@@ -119,6 +121,17 @@ var vm = new Vue({
                 this.images = data;
             }.bind(this)).fail(function (err) {
                 this.state.errors.global = 'Failed to load images';
+            }.bind(this));
+        },
+        deleteImage(image) {
+            $.ajax({
+                type: "DELETE",
+                url: '/api/images/' + image.name,
+                dataType: 'json'
+            }).done(function (data) {
+                this.getImages();
+            }.bind(this)).fail(function (err) {
+                this.state.errors.global = 'Failed to delete image';
             }.bind(this));
         },
         resetForm() {

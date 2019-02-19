@@ -14,16 +14,32 @@
             <div class="row">
                 <div class="col-lg-3 col-md-4 col-xs-6 thumb" v-for="images_item in images">
                     <div class="thumbnail">
-                        <a href="#" @click="editImage(images_item)">
+                        <figcaption class="figure-caption" style="margin-bottom:-35px">
+                            <div class="row">
+                                <div class="col-6 col-md-8 col-lg-9 text-left"></div>
+                                <div class="col-6 col-md-4 col-lg-3 text-right" v-if="images_item.metadata">
+                                    <a href="javascript:void(0)" @click="deleteImage(images_item)" title="Delete" style="
+                                        background: white;
+                                        padding: 2px 5px;
+                                        margin-right: 14px;
+                                        box-shadow: rgb(0, 0, 0) 0px 0px 10px;
+                                        border-radius: 10px;
+                                    ">
+                                        <i class="fa fa-times text-danger mt-3" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </figcaption>
+                        <a href="javascript:void(0)" @click="editImage(images_item)">
                             <img class="img-thumbnail" :src="'/images/' + images_item.name" :alt="'/images/' + images_item.name">
                         </a>
                         <figcaption class="figure-caption mt-1 mb-2">
                             <div class="row">
                                 <div class="col-6 col-md-8 col-lg-9 text-left">
-                                    <span class="ml-2 text-truncate" style="display:block" :title="images_item.name">{{ images_item.name }} ({{ formatBytes(images_item.size) }})</span>
+                                    <span class="ml-2 text-truncate" style="display:block" :title="images_item.name+' ('+formatBytes(images_item.size)+')'">{{ images_item.name }} ({{ formatBytes(images_item.size) }})</span>
                                 </div>
                                 <div class="col-6 col-md-4 col-lg-3 text-right" v-if="images_item.metadata">
-                                    <span class="mr-2 text-truncate" style="display:block">{{ images_item.metadata.width }}x{{ images_item.metadata.height }}</span>
+                                    <span class="mr-2 text-truncate" style="display:block" :title="`${images_item.metadata.width}x${images_item.metadata.height}`">{{ images_item.metadata.width }}x{{ images_item.metadata.height }}</span>
                                 </div>
                             </div>
                         </figcaption>
@@ -55,11 +71,11 @@
                                         <label class="col-md-12 control-label" for="textinput">
                                             Width:
                                             <span class="badge badge-secondary" v-if="!form.values.resize.autoHeight">
-                                                {{form.values.resize.width}}px
+                                                {{ form.values.resize.width }}px
                                             </span>
                                             <span class="badge badge-secondary" v-else>auto</span>
-                                            <span>
-                                                Auto
+                                            <span class="pl-2">
+                                                Auto:
                                                 <label class="switch">
                                                     <input type="checkbox" value="true" v-model="form.values.resize.autoWidth">
                                                     <span class="switch-slider"></span>
@@ -75,11 +91,11 @@
                                         <label class="col-md-12 control-label" for="textinput">
                                             Height:
                                             <span class="badge badge-secondary" v-if="!form.values.resize.autoWidth">
-                                                {{form.values.resize.height}}px
+                                                {{ form.values.resize.height }}px
                                             </span>
                                             <span class="badge badge-secondary" v-else>auto</span>
-                                            <span>
-                                                Auto
+                                            <span class="pl-2">
+                                                Auto:
                                                 <label class="switch">
                                                     <input type="checkbox" value="true" v-model="form.values.resize.autoHeight">
                                                     <span class="switch-slider"></span>
@@ -185,12 +201,13 @@
                             <form class="form-horizontal">
                                 <fieldset>
                                     <div class="form-group row">
-                                        <label class="col-md-12 control-label" for="textinput">Quality: <span class="badge badge-secondary">{{ form.values.jpg.quality }}</span></label>
+                                        <label class="col-md-12 control-label" for="textinput">
+                                            Quality: <span class="badge badge-secondary">{{ form.values.jpg.quality }}</span>
+                                        </label>
                                         <div class="col-md-12">
                                             <input type="range" min="1" max="100" value="<%- defaults.jpg.quality %>" class="slider" v-model="form.values.jpg.quality">
                                         </div>
                                     </div>
-
                                     <div class="form-group row">
                                         <label class="col-sm-8 col-lg-7 control-label" for="textinput">Progressive</label>
                                         <div class="col-sm-4 col-lg-5">
@@ -200,7 +217,6 @@
                                             </label>
                                         </div>
                                     </div>
-
                                     <div class="form-group row">
                                         <label class="col-sm-8 col-lg-7 control-label" for="textinput">Chroma Subsampling</label>
                                         <div class="col-sm-4 col-lg-5">
@@ -210,7 +226,6 @@
                                             </select>
                                         </div>
                                     </div>
-
                                     <div class="form-group row">
                                         <label class="col-sm-8 col-lg-7 control-label" for="textinput">Trellis Quantisation</label>
                                         <div class="col-sm-4 col-lg-5">
@@ -220,7 +235,6 @@
                                             </label>
                                         </div>
                                     </div>
-
                                     <div class="form-group row">
                                         <label class="col-sm-8 col-lg-7 control-label" for="textinput">Overshoot Deringing</label>
                                         <div class="col-sm-4 col-lg-5">
@@ -230,7 +244,6 @@
                                             </label>
                                         </div>
                                     </div>
-
                                     <div class="form-group row">
                                         <label class="col-sm-8 col-lg-7 control-label" for="textinput">Optimize Scans</label>
                                         <div class="col-sm-4 col-lg-5">
@@ -240,7 +253,6 @@
                                             </label>
                                         </div>
                                     </div>
-
                                     <div class="form-group row">
                                         <label class="col-sm-8 col-lg-7 control-label" for="textinput">Optimize Coding</label>
                                         <div class="col-sm-4 col-lg-5">
@@ -250,9 +262,10 @@
                                             </label>
                                         </div>
                                     </div>
-
                                     <div class="form-group row">
-                                        <label class="col-md-12 control-label" for="textinput">Quantization Table: <span class="badge badge-secondary">{{ form.values.jpg.quantizationTable }}</span></label>
+                                        <label class="col-md-12 control-label" for="textinput">
+                                            Quantization Table: <span class="badge badge-secondary">{{ form.values.jpg.quantizationTable }}</span>
+                                        </label>
                                         <div class="col-md-12">
                                             <input type="range" min="0" max="8" value="<%- defaults.jpg.quantizationTable %>" class="slider" v-model="form.values.jpg.quantizationTable">
                                         </div>
@@ -276,17 +289,17 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#tab-3" role="tab" aria-controls="tab-3" aria-selected="false">
-                                Bootstrap Cards
+                                Cards
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#tab-4" role="tab" aria-controls="tab-4" aria-selected="false">
-                                Bootstrap Thumbnails
+                                Thumbnails
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#tab-5" role="tab" aria-controls="tab-5" aria-selected="false">
-                                Bootstrap Profile
+                                Profile
                             </a>
                         </li>
                         <!-- <li class="nav-item">
@@ -297,9 +310,6 @@
                     </ul>
 
                     <br>
-
-                    <!-- <pre>{{image}}</pre> -->
-                    {{ state.errors.global }}
 
                     <div class="tab-content">
                         <div id="tab-1" class="tab-pane fade show active">
@@ -482,7 +492,16 @@
                         </div>
                         <div class="list-group-item d-flex justify-content-between align-items-center">Name:&nbsp; <a :href="image.src" target="_blank" class="text-truncate">{{ image.name }}</a> <a :href="image.src" download class="text-truncate"><i class="fa fa-download" aria-hidden="true"></i></a></div>
                         <div class="list-group-item d-flex justify-content-between align-items-center text-truncate">Last Modified:&nbsp; <span class="text-truncate">{{ image.mtime }}</span></div>
-                        <div class="list-group-item d-flex justify-content-between align-items-center text-truncate">File Size:&nbsp; <span class="text-truncate">{{ formatBytes(image.size) }}</span></div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center text-truncate">
+                            File Size:&nbsp;
+                            <span class="text-truncate badge" :class="{
+                                'badge-danger': image.size > 100000,
+                                'badge-warning': image.size < 100000 && image.size > 75000,
+                                'badge-info': image.size < 75000 && image.size > 50000,
+                                'badge-secondary': image.size < 50000 && image.size > 25000,
+                                'badge-light': image.size < 25000 && image.size > 0
+                            }">{{ formatBytes(image.size) }}</span>
+                        </div>
                         <div class="list-group-item d-flex justify-content-between align-items-center text-truncate" v-if="image.metadata">Format:&nbsp; <span class="text-truncate">{{ image.metadata.format }}</span></div>
                         <div class="list-group-item d-flex justify-content-between align-items-center text-truncate" v-if="image.metadata">Progressive:&nbsp; <span class="text-truncate">{{ image.metadata.isProgressive ? 'Yes' : 'No' }}</div>
                         <div class="list-group-item d-flex justify-content-between align-items-center text-truncate" v-if="image.metadata">Dimensions:&nbsp; <span class="text-truncate">{{ image.metadata.width }}x{{ image.metadata.height }}</span></div>
