@@ -228,9 +228,12 @@ app.get('/images/:imageName', async (req, res) => {
                         if (err) {
                             // more then likly the original image is broken, add it to errors
                             const key = hash('sha256', path.basename(req.params.imageName)).toString('hex');
-                            images_errors[key] = {
+                            const { size, mtime } = fs.statSync(path.join(imagesDir, path.basename(req.params.imageName)));
+                            errors.images[key] = {
                                 file: path.basename(req.params.imageName),
-                                error: err.message
+                                error: err.message,
+                                size: size,
+                                mtime: mtime
                             };
                             console.log(err);
                             res.status(415).send(err.message);
@@ -267,7 +270,6 @@ app.get('/images/:imageName', async (req, res) => {
 
 //
 let images = {};
-let images_errors = {};
 app.get('/api/images', (req, res, next) => {
     // cache
     if (Object.keys(images).length) {
@@ -279,9 +281,8 @@ app.get('/api/images', (req, res, next) => {
         let data = {};
         for (let i in items) {
             const key = hash('sha256', items[i]).toString('hex');
+            const { size, mtime } = fs.statSync(path.join(imagesDir, items[i]));
             try {
-                const { size, mtime } = fs.statSync(path.join(imagesDir, items[i]));
-
                 const sharpImage = sharp(path.join(imagesDir, items[i]));
                 let imageMetadata = await sharpImage.metadata();
                 delete imageMetadata.exif;
@@ -296,8 +297,10 @@ app.get('/api/images', (req, res, next) => {
                 };
             } catch (e) {
                 console.log('Error:', path.join(imagesDir, items[i]), e);
-                images_errors[key] = {
+                errors.images[key] = {
                     file: items[i],
+                    size: size,
+                    mtime: mtime,
                     error: e.message
                 }
             }
@@ -306,8 +309,12 @@ app.get('/api/images', (req, res, next) => {
         res.json(data);
     });
 })
-app.get('/api/images/errors', (req, res, next) => {
-    res.json(images_errors);
+
+let errors = {
+    images: {}
+}
+app.get('/api/errors', (req, res, next) => {
+    res.json(errors);
 })
 
 app.delete('/api/images/:name', (req, res, next) => {

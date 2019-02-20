@@ -6,11 +6,11 @@
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" v-cloak>
 
         <% include ../partials/header %>
 
-        <main role="main" class="container-fluid" v-if="state.page === 'index'" v-cloak>
+        <main role="main" class="container-fluid" v-if="state.page === 'index'">
             <div class="row">
                 <div class="col-lg-3 col-md-4 col-xs-6 thumb" v-for="images_item in images">
                     <div class="thumbnail">
@@ -48,7 +48,18 @@
             </div>
         </main>
 
-        <main role="main" class="container-fluid" v-if="state.page === 'edit'" v-cloak>
+        <main role="main" class="container-fluid" v-if="state.page === 'errors'">
+            <div class="row">
+                <div class="col-12">
+                    <h1>Errors</h1>
+
+                    <pre>{{ errors }}</pre>
+
+                </div>
+            </div>
+        </main>
+
+        <main role="main" class="container-fluid" v-if="state.page === 'edit'">
             <div class="row">
                 <div class="col-sm-4 col-lg-3">
                     <div class="list-group draggable mb-3">

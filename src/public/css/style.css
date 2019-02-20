@@ -371,3 +371,14 @@ input:checked+.switch-slider:before {
         font-size: 1.6vw
     }
 }
+
+.errors-badge {
+    padding: 0px 3px;
+    background: red;
+    color: white;
+    border-radius: 13px;
+    font-size: 75%;
+    position: relative;
+    left: 6px;
+    top: -10px
+}

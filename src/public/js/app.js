@@ -37,6 +37,7 @@ var vm = new Vue({
                 }
             },
             images: [],
+            errors: {},
             image: {
                 processing: false,
                 name: 'default.jpg',
@@ -102,16 +103,48 @@ var vm = new Vue({
                 }.bind(this));
             }, throttleTime),
             deep: true
+        },
+        'state.page': function (newValue){
+            if (newValue === 'errors') {
+                this.getErrors()
+            }
+        }
+    },
+    computed: {
+        total_errors: function(){
+            let total = 0;
+            if (this.errors.images) {
+                total += Object.keys(this.errors.images).length;
+            }
+            if (this.errors.sharp) {
+                total += Object.keys(this.errors.sharp).length;
+            }
+            if (this.errors.uploads) {
+                total += Object.keys(this.errors.uploads).length;
+            }
+            return total;
         }
     },
     created() {
         this.form.values = _.deepClone(this.defaults);
         this.getImages();
+        this.getErrors();
     },
     mounted() {
-        $('[data-toggle="tooltip"]').tooltip()
+        $('[data-toggle="tooltip"]').tooltip();
     },
     methods: {
+        getErrors() {
+            $.ajax({
+                type: "GET",
+                url: '/api/errors',
+                dataType: 'json'
+            }).done(function (data) {
+                this.errors = data;
+            }.bind(this)).fail(function (err) {
+                this.state.errors.global = 'Failed to load images';
+            }.bind(this));
+        },
         getImages() {
             $.ajax({
                 type: "GET",
